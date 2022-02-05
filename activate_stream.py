@@ -21,7 +21,7 @@ class Listener(Stream):
 
     def send_tweet_to_spark(self, tweet_data):
         try:
-            self.tcp_conn.sendall(json.dumps(tweet_data).encode("utf-8"))
+            self.tcp_conn.send((json.dumps(tweet_data) + "\n").encode("utf-8"))
         except:
             e = sys.exc_info()
             print("Error: %s" % e)
