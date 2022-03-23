@@ -1,0 +1,28 @@
+# Python
+__pycache__
+
+# YAML config
+*.yml
+*.yaml
+
+# secrets
+*secrets*
+*.pem
+# Postgres
+pgdata
+
+# VS code
+.vscode
+
+#jupyter
+.ipynb_checkpoints
+
+#other
+sample.json
+emr_cluster_setup_example.sh
+
+#Environments
+wordle_pulse_venv/
+
+#temp stuff
+temp/
