@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, from_json, to_date, col, to_utc_timestamp, explode, split, current_timestamp
-from pyspark.sql.types import LongType, StructType, StringType
+from pyspark.sql.types import LongType, StructType, StringType, IntegerType
 from datetime import datetime
 import os
 import pytz
@@ -8,9 +8,7 @@ import sys
 import yaml
 import configparser
 from time import gmtime, strftime
-sys.path.append('../')
-
-from tweet_parser import TweetParser
+from src.tweet_parser import TweetParser
 
 os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.apache.hadoop:hadoop-aws:3.3.1 pyspark-shell'
 
@@ -72,13 +70,18 @@ filtered_data = lines \
     .withColumn('results', attempts_fn(col('message'))) \
     .dropDuplicates(["id"])
 
-filtered_data = filtered_data.filter(col('results') != "false")
 
-# if filtered_data != []:
-#     filtered_data = filtered_data \
-#         .withColumn('wordle_id', col('results'['wordle_id'])) \
-#         .withColumn('attempts_count', col('results'['attempts_count'])) \
-#         .withColumn('results', col('results'['attempts']))
+filtered_data = filtered_data.filter(col('results') != "{}")
+
+results_schema = StructType(). \
+    add('wordle_id', StringType(), False). \
+    add('attempts_count', IntegerType(), False). \
+    add('attempts', StringType(), False)
+
+
+filtered_data = filtered_data \
+    .withColumn('results', from_json('results', results_schema)) \
+    .select('id', 'created_at', 'processed_at', 'user_id', 'message', 'results.wordle_id', 'results.attempts_count', 'results.attempts')
 
 filtered_data.printSchema()
 
@@ -86,7 +89,7 @@ filtered_data.printSchema()
 def postgres_sink(df, batch_id):
 
     dbname = config['dbname']
-    dbtable = config['dbtable']
+    dbtable = 'tweets_v4'
     dbuser = config['dbuser']
     dbpass = config['dbpass']
     dbhost = config['dbhost']
@@ -105,21 +108,13 @@ def postgres_sink(df, batch_id):
         mode="append",
         properties=properties)
 
+
 # Write to Postgres
-# query = filtered_data \
-#     .writeStream \
-#     .trigger(processingTime='15 seconds') \
-#     .outputMode("append") \
-#     .foreachBatch(postgres_sink) \
-#     .start()
-
-
-# Start running the query that prints tweet data to the console
 query = filtered_data \
     .writeStream \
-    .format("console") \
+    .trigger(processingTime='15 seconds') \
     .outputMode("append") \
-    .trigger(processingTime="5 seconds") \
+    .foreachBatch(postgres_sink) \
     .start()
 
 query.awaitTermination()
