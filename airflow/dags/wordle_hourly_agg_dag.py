@@ -3,14 +3,14 @@ from datetime import datetime
 from airflow.operators.postgres_operator import PostgresOperator
 
 POSTGRES_CONN_ID = "pg_aws"
-TMPL_SEARCH_PATH = "/sql/"
+TMPL_SEARCH_PATH = "dags/sql/"
 
 dag = DAG(
-    "wordle_hourly_agg_dag",
+    "wordle_hourly_agg_dag_2",
     template_searchpath=[TMPL_SEARCH_PATH],
     schedule_interval="0 * * * *",
-    start_date=datetime(2022, 4, 7),
-    catchup=False)
+    start_date=datetime(2022, 4, 6),
+    catchup=True)
 
 add_hourly_aggregations = PostgresOperator(
     task_id="add_hourly_aggregations",
