@@ -21,11 +21,11 @@ class TweetParser():
         self.text = args[0]
 
     def _number_of_attempts(self, text):
-        m = re.findall(r"(.)/6", text)[0]
-        if m == 'X':
+        attempts = re.findall(r"(.)/6", text)[0]
+        if attempts == 'X':
             return 6
         else:
-            return int(m)
+            return int(attempts)
 
     def _parse_attempts(self, grid):
         replacements = [
@@ -55,26 +55,23 @@ class TweetParser():
 
         return json.dumps(result_dict)
 
-    def wordle_result_exist(self):  # better like a function that returns true/false?
-        attempts_arr = []
-        num_of_attempts = 0
-        m = re.search(HEADER, self.text)
-        if m is None:
+    def perform(self):
+        header_text = re.search(HEADER, self.text)
+        if header_text is None:
             return json.dumps({})
 
-        num_of_attempts = self._number_of_attempts(m[0])
-        puzzle_id = re.search(PUZZLE_ID, m[0])[0]
-        grid = rf"{ROW}\n"*num_of_attempts
-        grid = grid[:-2] + ''
-        m = re.search(grid, self.text)
-        if m is None:
+        num_of_attempts = self._number_of_attempts(header_text[0])
+        puzzle_id = re.search(PUZZLE_ID, header_text[0])[0]
+        grid_regex = rf"{ROW}\n"*num_of_attempts
+        grid_regex = grid_regex[:-2] + ''
+        grid = re.search(grid_regex, self.text)
+        if grid is None:
             return json.dumps({})
-        else:
-            attempts_arr = self._parse_attempts(m.group(0))
 
-        full_result = rf"{HEADER}\n\n{grid}"
-        m = re.search(full_result, self.text)
-        if m is None:
+        attempts_arr = self._parse_attempts(grid.group(0))
+        full_result_regex = rf"{HEADER}\n\n{grid_regex}"
+        full_result = re.search(full_result_regex, self.text)
+        if full_result is None:
             return json.dumps({})
 
         return self.prepare_result(attempts_arr, num_of_attempts, puzzle_id)
