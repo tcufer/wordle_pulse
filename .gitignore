@@ -22,7 +22,10 @@ sample.json
 emr_cluster_setup_example.sh
 
 #Environments
-wordle_pulse_venv/
+spark_venv/
+twitter_handle_venv/
+dashboard_venv/
+airflow_venv/
 
 #temp stuff
 temp/
