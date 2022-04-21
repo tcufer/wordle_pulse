@@ -2,18 +2,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, from_json, col
 from pyspark.sql.types import LongType, StructType, StringType, IntegerType
 from datetime import datetime
-import os
-import yaml
-import configparser
 from src.tweet_parser import TweetParser
-
-
-with open('../secrets.yml', 'r') as file:
-    config = yaml.safe_load(file)
-
-s3_conf = configparser.ConfigParser()
-config_path = os.path.join(os.path.expanduser('~'), '.aws/credentials')
-s3_conf.read(config_path)
+from src.constants import CONFIG, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 
 
 def get_or_create_spark_session(name):
@@ -29,10 +19,10 @@ def prepare_kinesis_read_stream(spark):
     events = spark \
         .readStream \
         .format("kinesis") \
-        .option("streamName", config['kinesis']['streamName']) \
-        .option("endpointUrl", config['kinesis']['endpointUrl']) \
-        .option("awsAccessKeyId", s3_conf.get('development', 'aws_access_key_id')) \
-        .option("awsSecretKey", s3_conf.get('development', 'aws_secret_access_key')) \
+        .option("streamName", CONFIG['kinesis']['streamName']) \
+        .option("endpointUrl", CONFIG['kinesis']['endpointUrl']) \
+        .option("awsAccessKeyId", AWS_ACCESS_KEY_ID) \
+        .option("awsSecretKey", AWS_SECRET_ACCESS_KEY) \
         .option("initialPosition", "latest") \
         .load()
 
@@ -54,16 +44,26 @@ def getResults(text):
     return TweetParser(text).perform()
 
 
-def process_tweet_content(tweet):
+def prepare_tweet_content(tweet):
     schema = StructType(). \
         add('id', LongType(), False). \
         add('created_at', StringType(), False) .\
         add('user', StructType().add("id_str", StringType(), False), False). \
         add('text', StringType(), False)
 
+    type_name = tweet.schema.fields[0].name
+    select_expression = f"CAST({type_name} AS STRING)"
+    print(type_name)
+    print(select_expression)
     processed_tweet = tweet \
-        .selectExpr('CAST(data AS STRING)') \
-        .select(from_json('data', schema).alias('tweet_data')) \
+        .selectExpr(select_expression) \
+        .select(from_json(type_name, schema).alias('tweet_data'))
+
+    return processed_tweet
+
+
+def process_tweet_content(tweet):
+    processed_tweet = prepare_tweet_content(tweet) \
         .selectExpr('tweet_data.id',
                     'tweet_data.created_at',
                     'tweet_data.user.id_str AS user_id',
@@ -96,11 +96,11 @@ def process_tweet_content(tweet):
 
 def postgres_sink(df, batch_id):
     dbtable = 'tweets_v4'
-    url = f"jdbc:postgresql://{config['dbhost']}:{config['dbport']}/{config['dbname']}"
+    url = f"jdbc:postgresql://{CONFIG['dbhost']}:{CONFIG['dbport']}/{CONFIG['dbname']}"
     properties = {
         "driver": "org.postgresql.Driver",
-        "user": config['dbuser'],
-        "password": config['dbpass'],
+        "user": CONFIG['dbuser'],
+        "password": CONFIG['dbpass'],
         "stringtype": "unspecified"
     }
     df.write.jdbc(
