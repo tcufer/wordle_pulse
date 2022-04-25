@@ -16,4 +16,4 @@ consumer_secret = CONFIG['consumer_secret']
 access_key = CONFIG['access_key']
 access_secret = CONFIG['access_secret']
 
-WORDLE_START_DATE = date(2021,6,20)
+WORDLE_START_DATE = date(2021,6,19)

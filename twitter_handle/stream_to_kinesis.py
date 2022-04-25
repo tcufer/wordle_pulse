@@ -8,7 +8,7 @@ from tweepy import API
 from tweepy import Stream
 import boto3
 import time
-from datetime import date
+from datetime import datetime, date
 from constants import CONFIG, WORDLE_START_DATE
 
 class Listener(Stream):
@@ -42,17 +42,17 @@ class Listener(Stream):
 
 
 def _prepare_filter_keywords():
-    wordle_id = (date.today() - WORDLE_START_DATE).days
-    query_string = [f"wordle {wordle_id} (1/6 OR 2/6 OR 3/6 OR 4/6 OR 5/6 OR X/6)"]
-    return query_string
+    wordle_id = (datetime.utcnow().date() - WORDLE_START_DATE).days
+    stream_filter = [f"Wordle {wordle_id}"]
+    return stream_filter
 
 def _stream_tweets(stream):
     stream.filter(track=_prepare_filter_keywords(), languages=['en'], threaded=True)
-    current_date = date.today()
+    current_date = datetime.utcnow().date()
     while True:
-        if date.today() > current_date:
+        if datetime.utcnow().date() > current_date:
             stream.disconnect()
-            current_date = date.today()
+            current_date = datetime.utcnow().date()
             time.sleep(10)
             stream.filter(track=_prepare_filter_keywords(), languages=['en'], threaded=True)
 
