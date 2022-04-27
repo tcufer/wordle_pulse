@@ -29,3 +29,7 @@ airflow_venv/
 
 #temp stuff
 temp/
+
+#terraform
+terraform*
+.terraform*
