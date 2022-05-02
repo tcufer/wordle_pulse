@@ -9,15 +9,15 @@ CREATE TABLE public.tweets (
     attempts jsonb
 );
 
--- CREATE TABLE public.aggregations (
---     name regclass primary key,
---     last_update TIMESTAMP NOT NULL
--- );
-
-
 CREATE TABLE public.agg_hourly (
     results_total_count int,
     results_last_hour int,
     unique_results_last_hour int,
+    hour_window TIMESTAMP without time zone
+);
+
+CREATE TABLE public.agg_hourly_most_common_results (
+    total_count int,
+    result jsonb,
     hour_window TIMESTAMP without time zone
 );
