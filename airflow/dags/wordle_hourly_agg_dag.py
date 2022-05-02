@@ -2,7 +2,7 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.postgres_operator import PostgresOperator
 
-POSTGRES_CONN_ID = "pg_aws"
+POSTGRES_CONN_ID = "pg_dev"
 TMPL_SEARCH_PATH = "dags/sql/"
 
 dag = DAG(
@@ -19,4 +19,11 @@ add_hourly_aggregations = PostgresOperator(
     sql="wordle_results_hourly.sql"
 )
 
-add_hourly_aggregations
+add_hourly_aggregations_top_results = PostgresOperator(
+    task_id="add_hourly_aggregations_top_results",
+    dag=dag,
+    postgres_conn_id=POSTGRES_CONN_ID,
+    sql="wordle_most_common_results_hourly.sql"
+)
+
+add_hourly_aggregations >> add_hourly_aggregations_top_results
