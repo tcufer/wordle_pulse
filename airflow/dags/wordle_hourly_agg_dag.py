@@ -26,4 +26,11 @@ add_hourly_aggregations_top_results = PostgresOperator(
     sql="wordle_most_common_results_hourly.sql"
 )
 
-add_hourly_aggregations >> add_hourly_aggregations_top_results
+add_hourly_distribution_results = PostgresOperator(
+    task_id="add_hourly_distribution_results",
+    dag=dag,
+    postgres_conn_id=POSTGRES_CONN_ID,
+    sql="wordle_results_distribution_hourly.sql"
+)
+
+add_hourly_aggregations >> add_hourly_aggregations_top_results >> add_hourly_distribution_results
