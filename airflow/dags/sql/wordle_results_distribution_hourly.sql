@@ -2,7 +2,7 @@ INSERT INTO stats_hourly_results_distribution(score_total_count, score, hour_win
 SELECT
   COUNT(*) as results_total_count,
   CASE
-      WHEN (attempts_count = 6 AND attempts ->> '6' = '["2", "2", "2", "2", "2"]')
+      WHEN (attempts_count = 6 AND attempts ->> '6' != '["2", "2", "2", "2", "2"]')
       THEN 'X'
       ELSE CAST(attempts_count AS varchar)
   END score,
