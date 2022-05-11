@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # encoding: utf-8
 from functools import cache
-import yaml
 import json
 from tweepy import OAuthHandler
 from tweepy import API
 from tweepy import Stream
 import boto3
 import time
-from datetime import datetime, date
+from datetime import datetime
 from constants import CONFIG, WORDLE_START_DATE
 
 class Listener(Stream):
@@ -18,8 +17,12 @@ class Listener(Stream):
     # create kinesis client
     @cache
     def _kinesis_client(self):
-        session = boto3.Session(profile_name="development")
-        kinesis_client = session.client("kinesis", region_name='eu-central-1')
+        kinesis_client = boto3.client(
+            "kinesis",
+            aws_access_key_id=CONFIG['aws_access_key_id'],
+            aws_secret_access_key=CONFIG['aws_secret_access_key'],
+            region_name=CONFIG['region_name']
+        )
         return kinesis_client
 
     def send_tweet_to_kinesis(self, tweet_data):
@@ -47,7 +50,7 @@ def _prepare_filter_keywords():
     return stream_filter
 
 def _stream_tweets(stream):
-    stream.filter(track=_prepare_filter_keywords(), languages=['en'], threaded=True)
+    stream.filter(track=_prepare_filter_keywords(), languages=['en'], threaded=False)
     current_date = datetime.utcnow().date()
     while True:
         if datetime.utcnow().date() > current_date:
