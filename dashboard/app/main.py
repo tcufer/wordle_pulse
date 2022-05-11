@@ -12,7 +12,7 @@ def _prepare_distribution_chart():
     Prepares bar chart for distribution of results based on score
     """
 
-    bars = alt.Chart(st.session_state.metric_5).mark_bar().encode(
+    bars = alt.Chart(st.session_state.metric_6).mark_bar().encode(
         x=alt.X('score:O', axis=alt.Axis(title='Score', labelFontSize=15, titleFontSize=20)),
         y=alt.Y('score_total_count:Q', axis=alt.Axis(title='Count', labelFontSize=15, titleFontSize=20))
     )
@@ -32,7 +32,6 @@ def _prepare_daily_totals_chart(source):
     """
 
     base = alt.Chart(source).encode(
-        # x='hour_window'
         x=alt.X('hour_window', axis=alt.Axis(title='Hour', labelFontSize=15, titleFontSize=20))
         )
 
@@ -56,7 +55,6 @@ def main():
     st.title("Wordle Pulse dashboard")
     col1, col2 = st.columns([1, 1])
 
-    # Uses st.experimental_singleton to only run once.
     @st.experimental_singleton
     def init_connection():
         return psycopg2.connect(DB_CONN_STRING)
@@ -78,6 +76,8 @@ def main():
     hours = data_for_selected_day['hour_window']
     daily_totals = data_for_selected_day[['hour_window', 'results_total_count', 'unique_results_total_count']]
     daily_totals['hour_window'] = daily_totals['hour_window'].dt.strftime("%H:%M:%S")
+
+    col1.header('Result counts by hour')
     selected_hour = col1.select_slider('Hour', options=hours, key='hour_slider')
     most_common_results = sqlio.read_sql_query(get_most_common_results_per_hour(selected_hour), conn)
 
@@ -87,19 +87,22 @@ def main():
     st.session_state.metric_2 = list(data_for_selected_day.loc[data_for_selected_day['hour_window'] == selected_hour]['results_last_hour'])[0]
     st.session_state.metric_3 = list(data_for_selected_day.loc[data_for_selected_day['hour_window'] == selected_hour]['unique_results_last_hour'])[0]
 
-    col1.metric('All results', str(st.session_state.metric_1), delta=None, delta_color="normal")
-    col1.metric('Results in last hour', str(st.session_state.metric_2), delta=None, delta_color="normal")
-    col1.metric('Unique results in last hour', str(st.session_state.metric_3), delta=None, delta_color="normal")
+    st.session_state.metric_4 = list(data_for_selected_day.loc[data_for_selected_day['hour_window'] == selected_hour]['unique_results_total_count'])[0]
+
+    col1.metric('All results today', str(st.session_state.metric_1),)
+    col1.metric('Unique results today', str(st.session_state.metric_4))
+    col1.metric('Results in last hour', str(st.session_state.metric_2))
+    col1.metric('Unique results in last hour', str(st.session_state.metric_3))
 
     col1.subheader("Most common results in the last hour")
-    st.session_state.metric_4 = most_common_results[(most_common_results['hour_window'] == selected_hour)]
-    for idx, row in st.session_state.metric_4.iterrows():
+    st.session_state.metric_5 = most_common_results[(most_common_results['hour_window'] == selected_hour)]
+    for idx, row in st.session_state.metric_5.iterrows():
         col1.write(f"Count: {row['total_count']}")
         col1.markdown(row['result'])
 
     # results distribution chart
     distribution_data = sqlio.read_sql_query(get_results_distribution(selected_day), conn)
-    st.session_state.metric_5 = distribution_data[distribution_data['hour_window'] == selected_hour]
+    st.session_state.metric_6 = distribution_data[distribution_data['hour_window'] == selected_hour]
     col2.header('Result distribution in last hour')
     col2.altair_chart(_prepare_distribution_chart(), use_container_width=True)
 
