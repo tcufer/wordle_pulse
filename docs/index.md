@@ -12,7 +12,7 @@ The objective is to capture messages with Wordle daily puzzle results on Twitter
 
 ## High level architecture
 
-  https://whimsical.com/wordle-pulse-pipeline-design-LNV8hCKdRDbuud5q8gYR77
+  [Whimsical diagram](https://whimsical.com/wordle-pulse-pipeline-design-LNV8hCKdRDbuud5q8gYR77)
 
 *Disclaimer: Tools and services used suggest using AWS as a cloud provider. However, the choice was made purely on the previous familiarity. For projects like this, architecture is supposed to be cloud-agnostic, since all the work can be done with any of the three main providers (AWS, GCP, Azure).*
 
@@ -154,7 +154,7 @@ With building a simple dashboard, we can show some characteristics of Wordle puz
 - distribution of attempts (scores) in the last hour
 - most common results (paths) in the last hour
 
-Live Demo dashboard is available here: http://ec2-3-126-209-227.eu-central-1.compute.amazonaws.com:8000/
+Live Demo dashboard is available here: [http://ec2-3-126-209-227.eu-central-1.compute.amazonaws.com:8000/](http://ec2-3-126-209-227.eu-central-1.compute.amazonaws.com:8000/)
 
 ## Conclusion
 
