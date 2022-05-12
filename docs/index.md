@@ -1,10 +1,4 @@
-# Wordle Pulse
-
-
-*Data Engineering project for capturing and parsing Wordle results from Twitter Stream.*
-
-
-[Wordle](https://www.nytimes.com/games/wordle/index.html) puzzle game has now been around for almost a year. After becoming viral, it grew a lot in popularity, not only with playing it, but sparking new variations of the game. It also became an attractive topic for different data oriented projects, based on its play and results that were shared on social networks ([WordleStats](https://twitter.com/wordlestats), [What makes a Wordle word hard?](https://waldrn.com/what-makes-a-wordle-word-hard/)).
+[Wordle](https://www.nytimes.com/games/wordle/index.html) puzzle game has now been around for almost a year. Since the start, it grew a lot in popularity, not only with playing it, but sparking new variations of the game. It also became an attractive topic for different data oriented projects, based on its play and results that were shared on social networks ([WordleStats](https://twitter.com/wordlestats), [What makes a Wordle word hard?](https://waldrn.com/what-makes-a-wordle-word-hard/)).
 
 This article is based on the project done for building a data pipeline for capturing and parsing Wordle results, making them more accessible to propel further analysis on the top of it.
 
