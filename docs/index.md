@@ -129,7 +129,6 @@ message: "Wordle 293 4/6
 🟩⬜🟩🟩🟩
 🟩🟩🟩🟩🟩",
 attempts: {"1": ["0", "1", "2", "2", "0"], "2": ["2", "0", "0", "0", "0"], "3": ["2", "0", "2", "2", "2"], "4": ["2", "2", "2", "2", "2"]}
-
 ```
 
 Because we are mostly interested on puzzle results, we left out most of the user data from tweets. We kept *tweet id* and *user id* so results can be referenced to original tweets.
@@ -142,8 +141,7 @@ Now that we have established the stream and processed data is already loading to
 
 We will use Apache Airflow for orchestrating aggregation tasks. Since we only have one table and need no external sources, our DAG will be rather simple. DAG will be scheduled hourly, to do calculations for the past hour. We need to take care of the edge case here, where records produced by a task, run at midnight, count for the previous day. Since the Wordle puzzle is different for each day, aggregations should also be done on results of the puzzle for that day.
 
-![[airflow_dag.png]]
-(DAG graph)
+![Airflow DAG](airflow_dag.png?raw=true)
 
 Besides counts of results found in the last hour and up to each hour, we could track distribution of score (number of attempts needed) and how unique results are in terms of attempts taken. Aggregations for each metric will be stored in separate tables:
 
@@ -152,7 +150,7 @@ Besides counts of results found in the last hour and up to each hour, we could t
 - `stats_hourly_results_distribution` for distribution of score in the last hour
 
 
-  ![[pages/aggregation_tables.png]]
+![Aggregation tables](aggregation_tables.png?raw=true)
 
 ### Results (Streamlit Dashboard)
 
