@@ -1,7 +1,7 @@
 import yaml
 from datetime import date
 
-with open('../secrets.yml', 'r') as file:
+with open('secrets.yml', 'r') as file:
     CONFIG = yaml.safe_load(file)
 
 
