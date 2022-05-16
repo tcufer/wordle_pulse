@@ -1,4 +1,5 @@
-Data Engineering project for capturing and parsing Wordle results from Twitter Stream.
+Data Engineering project for capturing and parsing Wordle results from Twitter Stream. 
+[Blog post](https://tcufer.github.io/wordle_pulse/).
 
 ## Objective
 
