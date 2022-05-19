@@ -21,6 +21,7 @@ Let's say we just solved today's Wordle. We are the first today in our circle to
 <figcaption><i>Default format of a message for sharing Wordle result</i></figcaption>
 
 
+
 The following information can be retrieved:
 - Puzzle id (293),
 - Number of attempts (4) and
