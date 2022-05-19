@@ -3,7 +3,7 @@ from pyspark.sql.functions import udf, from_json, col
 from pyspark.sql.types import LongType, StructType, StringType, IntegerType
 from datetime import datetime
 from src.tweet_parser import TweetParser
-from src.constants import CONFIG, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+from src.constants import CONFIG, CHECKPOINT_BUCKET
 
 
 def get_or_create_spark_session(name):
@@ -21,9 +21,9 @@ def prepare_kinesis_read_stream(spark):
         .format("kinesis") \
         .option("streamName", CONFIG['kinesis']['streamName']) \
         .option("endpointUrl", CONFIG['kinesis']['endpointUrl']) \
-        .option("awsAccessKeyId", AWS_ACCESS_KEY_ID) \
-        .option("awsSecretKey", AWS_SECRET_ACCESS_KEY) \
-        .option("initialPosition", "latest") \
+        .option("awsAccessKeyId", CONFIG['aws_access_key_id']) \
+        .option("awsSecretKey", CONFIG['aws_secret_access_key']) \
+        .option("initialPosition", "TRIM_HORIZON") \
         .load()
 
     return events
@@ -70,8 +70,7 @@ def process_tweet_content(tweet):
                     'tweet_data.text AS message') \
         .withColumn("created_at", parseCreatedAtDatetime(col('created_at'))) \
         .withColumn('processed_at', getCurrentDatetime()) \
-        .withColumn('results', getResults(col('message'))) \
-        .dropDuplicates(["id"])
+        .withColumn('results', getResults(col('message')))
 
     processed_tweet = processed_tweet.filter(col('results') != "{}")
 
@@ -115,6 +114,7 @@ def prepare_postgres_write_stream(filtered_data):
                     .writeStream \
                     .trigger(processingTime='15 seconds') \
                     .outputMode("append") \
+                    .option("checkpointLocation", CHECKPOINT_BUCKET) \
                     .foreachBatch(postgres_sink)
 
     return write_stream

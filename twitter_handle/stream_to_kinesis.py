@@ -32,7 +32,7 @@ class Listener(Stream):
                 Data=(json.dumps(tweet_data) + "\n").encode("utf-8"),
                 PartitionKey=str(tweet_data['user']['screen_name'])
             )
-        except:
+        except UnicodeEncodeError as e:
             # pass on possible encoding problem to avoid breaking the stream
             pass
 

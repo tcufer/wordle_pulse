@@ -33,17 +33,15 @@ class TweetParser():
             (YELLOW, '1'),
             (GREEN, '2')
         ]
-        normalised_grid = []
+        numericized_grid = []
 
         for char, number in replacements:
             grid = re.sub(char, number, grid)
 
         grid = grid.split()
-        for row in grid:
-            normalised_grid.append(list(row))
+        [numericized_grid.append(list(map(int, row))) for row in grid]
 
-        # returns nested list [['0', '1', '0', '0', '0'], ['0', '0', '2', '0', '0'],..]
-        return normalised_grid
+        return numericized_grid
 
     def prepare_result(self, result, num_of_attempts, puzzle_id):
         result_dict = {}
