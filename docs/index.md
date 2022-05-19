@@ -19,7 +19,7 @@ Let's say we just solved today's Wordle. We are the first today in our circle to
 🟩🟩🟩🟩🟩"
 ```
 <figcaption><i>Default format of a message for sharing Wordle result</i></figcaption>
-</br>
+
 
 The following information can be retrieved:
 - Puzzle id (293),
@@ -32,7 +32,7 @@ What we can do is to collect those results that are shared as public tweets. The
 
 The objective is to capture messages with Wordle daily puzzle results on Twitter and store them in a form that enables analysis and exploration of results. We will also implement one such use case to show the performance of solving the daily puzzle throughout the day.
 
-TODO: to make result useful, we should take apart each row and square in the grid of the result
+
 ## Requirements and Assumptions
 We need to frame our solution in terms of requirements and assumptions. Requirements will be the following:
 
@@ -46,6 +46,7 @@ We need to frame our solution in terms of requirements and assumptions. Requirem
 - Wordle resets the puzzle every day at midnight, depending on the time zone we are at.
 This means that results on Twitter could be for a different puzzle that is active in our time zone. We will simplify this and use UTC time zone, which is also used in API responses. Besides that, we will collect results only for one puzzle per day.
 - We will base our proposed solution on cloud managed services wherever possible, while  for development purposes containerized versions will be used.
+
 ## High level architecture
 
 With the objective, requirements and assumptions set, we can proceed to the architecture part.
