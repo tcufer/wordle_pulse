@@ -3,8 +3,7 @@ from pyspark.sql.functions import udf, from_json, col
 from pyspark.sql.types import LongType, StructType, StringType, IntegerType
 from datetime import datetime
 from src.tweet_parser import TweetParser
-from src.constants import CONFIG, CHECKPOINT_BUCKET
-
+from src import constants as const
 
 def get_or_create_spark_session(name):
     session = SparkSession \
@@ -19,10 +18,10 @@ def prepare_kinesis_read_stream(spark):
     events = spark \
         .readStream \
         .format("kinesis") \
-        .option("streamName", CONFIG['kinesis']['streamName']) \
-        .option("endpointUrl", CONFIG['kinesis']['endpointUrl']) \
-        .option("awsAccessKeyId", CONFIG['aws_access_key_id']) \
-        .option("awsSecretKey", CONFIG['aws_secret_access_key']) \
+        .option("streamName", const.KINESIS_STREAM_NAME) \
+        .option("endpointUrl", const.KINESIS_ENDPOINT_URL) \
+        .option("awsAccessKeyId",const.AWS_ACCESS_KEY_ID) \
+        .option("awsSecretKey", const.AWS_SECRET_ACCESS_KEY) \
         .option("initialPosition", "TRIM_HORIZON") \
         .load()
 
@@ -94,17 +93,17 @@ def process_tweet_content(tweet):
 
 
 def postgres_sink(df, batch_id):
-    dbtable = 'tweets_v4'
-    url = f"jdbc:postgresql://{CONFIG['dbhost']}:{CONFIG['dbport']}/{CONFIG['dbname']}"
+    dbtable = 'tweets'
+    url = const.DB_CONN_STRING
     properties = {
         "driver": "org.postgresql.Driver",
-        "user": CONFIG['dbuser'],
-        "password": CONFIG['dbpass'],
+        "user": const.PG_USER,
+        "password": const.PG_PASSWORD,
         "stringtype": "unspecified"
     }
     df.write.jdbc(
         url=url,
-        table=dbtable,
+        table=const.PG_TABLE,
         mode="append",
         properties=properties)
 
@@ -114,7 +113,7 @@ def prepare_postgres_write_stream(filtered_data):
                     .writeStream \
                     .trigger(processingTime='15 seconds') \
                     .outputMode("append") \
-                    .option("checkpointLocation", CHECKPOINT_BUCKET) \
+                    .option("checkpointLocation", const.CHECKPOINT_BUCKET) \
                     .foreachBatch(postgres_sink)
 
     return write_stream

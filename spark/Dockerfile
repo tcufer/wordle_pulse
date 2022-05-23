@@ -1,0 +1,19 @@
+FROM gcr.io/datamechanics/spark:platform-3.1-dm14
+
+ENV PYSPARK_MAJOR_PYTHON_VERSION=3
+WORKDIR /opt/application/
+
+# Download postgres jar
+RUN wget  https://jdbc.postgresql.org/download/postgresql-42.2.5.jar
+RUN mv postgresql-42.2.5.jar /opt/spark/jars
+
+# Download kinesis jar
+RUN wget  https://repo1.maven.org/maven2/com/qubole/spark/spark-sql-kinesis_2.12/1.2.0_spark-3.0/spark-sql-kinesis_2.12-1.2.0_spark-3.0.jar
+RUN mv spark-sql-kinesis_2.12-1.2.0_spark-3.0.jar /opt/spark/jars
+
+COPY ./requirements.txt /opt/application/requirements.txt
+RUN pip3 install -r /opt/application/requirements.txt
+
+COPY . /opt/application/
+COPY ./secrets.yml /opt/application/
+
