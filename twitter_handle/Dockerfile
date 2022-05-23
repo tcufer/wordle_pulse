@@ -12,12 +12,11 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 # install dependencies
 RUN pip install --upgrade pip
-COPY ./twitter_handle/requirements.txt /app/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 RUN pip install -r /app/requirements.txt
 
-
 # copy project
-COPY ./twitter_handle/ /app/
+COPY . /app/
 COPY ./secrets.yml /app/
 #start stream
 CMD ["python", "stream_to_kinesis.py"]
