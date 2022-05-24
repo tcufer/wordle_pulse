@@ -63,6 +63,11 @@ def main():
 
     all_dates = sqlio.read_sql_query(get_days_with_stats(), conn)
 
+    # Stop rendering if no data in aggregate tables
+    if all_dates['min_date'][0] is None:
+        st.warning("No data yet.")
+        st.stop()
+
     # day picker in sidebar
     selected_day = st.sidebar.date_input(
      "Select date",
