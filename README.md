@@ -9,11 +9,11 @@ The objective is to capture messages with Wordle daily puzzle results on Twitter
 
   https://whimsical.com/wordle-pulse-pipeline-design-LNV8hCKdRDbuud5q8gYR77
 
-  ![Whimsical diagram](static/whimsical_diagram.png?raw=true)
+  ![Whimsical diagram](docs/Wordle_Pulse_pipeline_design.jpg?raw=true)
 
 ## Results
 
-![Streamlit dashboard](static/dashboard_printscreen.png?raw=true)
+![Streamlit dashboard](docs/dashboard_printscreen.png?raw=true)
 
 
 ## Live demo dashboard
