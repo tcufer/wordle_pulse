@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  spark_app_test:
+      container_name: spark_app_test
+      build:
+        context: spark/
+        dockerfile: Dockerfile-test
+      env_file:
+        - ./.env
+      command: "pytest -p no:warnings"
