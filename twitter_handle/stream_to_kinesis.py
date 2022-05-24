@@ -8,7 +8,7 @@ from tweepy import Stream
 import boto3
 import time
 from datetime import datetime
-from constants import CONFIG, WORDLE_START_DATE
+import constants as const
 
 class Listener(Stream):
     def __init__(self, *args):
@@ -19,16 +19,16 @@ class Listener(Stream):
     def _kinesis_client(self):
         kinesis_client = boto3.client(
             "kinesis",
-            aws_access_key_id=CONFIG['aws_access_key_id'],
-            aws_secret_access_key=CONFIG['aws_secret_access_key'],
-            region_name=CONFIG['region_name']
+            aws_access_key_id=const.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=const.AWS_SECRET_ACCESS_KEY,
+            region_name=const.AWS_REGION_NAME
         )
         return kinesis_client
 
     def send_tweet_to_kinesis(self, tweet_data):
         try:
             self._kinesis_client().put_record(
-                StreamName=CONFIG['kinesis']['streamName'],
+                StreamName=const.KINESIS_STREAM_NAME,
                 Data=(json.dumps(tweet_data) + "\n").encode("utf-8"),
                 PartitionKey=str(tweet_data['user']['screen_name'])
             )
@@ -45,7 +45,7 @@ class Listener(Stream):
 
 
 def _prepare_filter_keywords():
-    wordle_id = (datetime.utcnow().date() - WORDLE_START_DATE).days
+    wordle_id = (datetime.utcnow().date() - const.WORDLE_START_DATE).days
     stream_filter = [f"Wordle {wordle_id}"]
     return stream_filter
 
@@ -62,10 +62,10 @@ def _stream_tweets(stream):
 
 def main():
     # authorize twitter, initialize stream
-    auth = OAuthHandler(CONFIG['consumer_key'], CONFIG['consumer_secret'])
-    auth.set_access_token(CONFIG['access_key'], CONFIG['access_secret'])
+    auth = OAuthHandler(const.TWITTER_CONSUMER_KEY, const.TWITTER_CONSUMER_SECRET)
+    auth.set_access_token(const.TWITTER_ACCESS_KEY, const.TWITTER_ACCESS_SECRET)
     api = API(auth, wait_on_rate_limit=True)
-    stream = Listener(CONFIG['consumer_key'], CONFIG['consumer_secret'], CONFIG['access_key'], CONFIG['access_secret'])
+    stream = Listener(const.TWITTER_CONSUMER_KEY, const.TWITTER_CONSUMER_SECRET, const.TWITTER_ACCESS_KEY, const.TWITTER_ACCESS_SECRET)
     try:
         print('Start streaming.')
         _stream_tweets(stream)
