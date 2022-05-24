@@ -1,8 +1,15 @@
-import yaml
+import os
 from datetime import date
 
-with open('secrets.yml', 'r') as file:
-    CONFIG = yaml.safe_load(file)
-
-
 WORDLE_START_DATE = date(2021, 6, 19)
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+KINESIS_STREAM_NAME = os.environ.get("KINESIS_STREAM_NAME")
+KINESIS_ENDPOINT_URL = os.environ.get("KINESIS_ENDPOINT_URL")
+AWS_REGION_NAME = os.environ.get("AWS_REGION_NAME")
+
+TWITTER_CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
+TWITTER_CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
+TWITTER_ACCESS_KEY = os.environ.get("TWITTER_ACCESS_KEY")
+TWITTER_ACCESS_SECRET = os.environ.get("TWITTER_ACCESS_SECRET")

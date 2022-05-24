@@ -1,35 +1,23 @@
 # Python
 __pycache__
-
-# YAML config
-*.yml
-*.yaml
-
 # secrets
+.env
 *secrets*
 *.pem
 # Postgres
 pgdata
-
+postgres-data
 # VS code
 .vscode
-
 #jupyter
 .ipynb_checkpoints
-
 #other
 sample.json
 emr_cluster_setup_example.sh
-
 #Environments
-spark_venv/
-twitter_handle_venv/
-dashboard_venv/
-airflow_venv/
-
+*_venv/
 #temp stuff
 temp/
-
 #terraform
 terraform*
 .terraform*
