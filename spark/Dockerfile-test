@@ -11,8 +11,8 @@ RUN mv postgresql-42.2.5.jar /opt/spark/jars
 RUN wget  https://repo1.maven.org/maven2/com/qubole/spark/spark-sql-kinesis_2.12/1.2.0_spark-3.0/spark-sql-kinesis_2.12-1.2.0_spark-3.0.jar
 RUN mv spark-sql-kinesis_2.12-1.2.0_spark-3.0.jar /opt/spark/jars
 
-COPY ./requirements.txt /opt/application/requirements.txt
-RUN pip3 install -r /opt/application/requirements.txt
+COPY ./requirements-test.txt /opt/application/requirements-test.txt
+RUN pip3 install -r /opt/application/requirements-test.txt
 
 COPY . /opt/application/
 
