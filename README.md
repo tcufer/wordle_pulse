@@ -21,7 +21,14 @@ The objective is to capture messages with Wordle daily puzzle results on Twitter
 [http://ec2-3-126-209-227.eu-central-1.compute.amazonaws.com:8000/](http://ec2-3-126-209-227.eu-central-1.compute.amazonaws.com:8000/)
 
 
+## What's more to add?
+It's open-ended :) Anyway, here are some things for future improvement:
+  - Infrastructure provisioning coverage
+  - CI/CD
+  - Separated environments
+
 ## Setup
+
 ### Requirements
   - AWS account
   - Twitter API credentials
