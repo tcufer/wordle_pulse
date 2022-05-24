@@ -30,12 +30,9 @@ The following information can be retrieved:
 What we can do is to collect those results that are shared as public tweets. The good thing is, the format doesn't change in regards to result, only the number of attempts and the grid of squares. We would need to parse the text to retrieve all the information and translate the grid into more "measurable" values to be able to evaluate each result. Doing this on a scale, we could build a dataset to provide a service/foundation for deeper analysis of the game.
 
 ## Objective
-$$
-\begin{align:justify}
+
 The objective is to capture messages with Wordle daily puzzle results on Twitter and store them in a form that enables analysis and exploration of results. We will also implement one such use case to show the performance of solving the daily puzzle throughout the day.
 
-\end{align:justify}
-$$
 ## Requirements and Assumptions
 We need to frame our solution in terms of requirements and assumptions. Requirements will be the following:
 
